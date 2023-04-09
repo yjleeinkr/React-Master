@@ -1,4 +1,5 @@
-import { atom, selector } from "recoil";
+import { EffectCallback } from "react";
+import { atom, DefaultValue, selector } from "recoil";
 
 // type보다 더 타입을 보장받을 수 있다.
 // 타입을 지정해주지 않는 이상 배열처럼 인덱스 값이 0부터 매겨진다.
@@ -19,9 +20,33 @@ export const categoryState = atom<Cateories>({
   default: Cateories.TO_DO
 });
 
+type SetSelf<T> = (newValue: T | DefaultValue) => void;
+type OnSet<T> = (callback: (newValue: T, oldValue: T | DefaultValue, isReset: boolean) => void) => void;
+
+ type AtomEffect<T> = (props: {
+   setSelf: SetSelf<T>;
+   onSet: OnSet<T>;
+ }) => void | EffectCallback;
+
+const localStorageEffect = (key: string) : AtomEffect<ToDo[]> => ({ setSelf, onSet })=> {
+  const savedValue = localStorage.getItem(key);
+  if (savedValue != null) {
+    setSelf(JSON.parse(savedValue))
+  }
+
+  onSet((newValue, _, isReset) => {
+    isReset
+      ? localStorage.removeItem(key)
+      : localStorage.setItem(key, JSON.stringify(newValue))
+  })
+}
+
 export const toDoState = atom<ToDo[]>({
   key: "toDo",
   default: [],
+  effects: [
+    localStorageEffect('toDo')
+  ]
 });
 
 export const toDoSelector = selector({
@@ -30,5 +55,5 @@ export const toDoSelector = selector({
     const toDos = get(toDoState)
     const category = get(categoryState);
     return toDos.filter(v => v.category === category)
-  }
+  },
 })

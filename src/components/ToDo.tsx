@@ -8,18 +8,22 @@ function Todo({ text, category, id }: ToDo) {
     const { currentTarget: { name } } = event;
     setToDos((oldToDos) => {
       const targetIdx = oldToDos.findIndex((toDo) => toDo.id === id);
-      const newToDo = { text, id, category: name as any};
+      const newToDo = { text, id, category: name as any };
       return [
         ...oldToDos.slice(0, targetIdx),
         newToDo,
         ...oldToDos.slice(targetIdx + 1),
       ];
+    });
+  };
+  const onDelete = () => {
+    setToDos((oldTodos) => {
+      return oldTodos.filter(toDo => toDo.id !== id)
     })
-
-  }
+  };
   return (
     <li>
-      <span> {text}</span>
+      <span>{text}</span>
       {category !== Cateories.TO_DO && (
         <button name={Cateories.TO_DO} onClick={onClick}>
           To Do
@@ -35,6 +39,7 @@ function Todo({ text, category, id }: ToDo) {
           Done
         </button>
       )}
+      <button onClick={onDelete}>X</button>
     </li>
   );
 }
