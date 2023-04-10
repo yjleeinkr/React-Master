@@ -1,5 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 import TodoList from './components/ToDoList';
+import Clock from './components/Clock';
 
 const GlobalStyle = createGlobalStyle`
 html, body, div, span, applet, object, iframe,
@@ -69,7 +70,9 @@ function App() {
   return (
     <>
       <GlobalStyle />
-      <TodoList/>
+      <TodoList />
+      <hr />
+      <Clock />
     </>
   ); 
 }

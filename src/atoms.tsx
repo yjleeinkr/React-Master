@@ -57,3 +57,21 @@ export const toDoSelector = selector({
     return toDos.filter(v => v.category === category)
   },
 })
+
+export const minuteState = atom({
+  key: "minutes",
+  default: 0,
+})
+
+// 📌 쓸데없이 여러개의 atom을 만들 필요 없이 다수의 atom을 이용해서 selector를 만들수도 있다.
+export const hourSelector = selector<number>({
+  key: "hours",
+  get: ({ get }) => {
+    const minutes = get(minuteState);
+    return minutes / 60;
+  },
+  set: ({ set }, newValue) => {
+    const minutes = Number(newValue) * 60
+    set(minuteState, minutes)
+  }
+})
